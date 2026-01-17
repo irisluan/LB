@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Experience Answer v0</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 840px; margin: 30px auto; padding: 0 16px; }
+    textarea { width: 100%; height: 140px; }
+    input, select, textarea { margin: 6px 0 16px; padding: 10px; width: 100%; box-sizing: border-box; }
+    button { padding: 12px 16px; cursor: pointer; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin-top: 16px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  </style>
+</head>
+<body>
+  <h2>Experience Answer v0 (Invite-only)</h2>
+  <p>Not advice. Not therapy. Just: interpret the experience.</p>
+
+  <div class="card">
+    <label>Access Code</label>
+    <input id="access_code" placeholder="e.g. TEST-001"/>
+
+    <div class="row">
+      <div>
+        <label>User Type</label>
+        <select id="user_type">
+          <option value="Parent">Parent</option>
+          <option value="Founder">Founder</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label>Time Pressure</label>
+        <select id="time_pressure">
+          <option>High</option><option selected>Medium</option><option>Low</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Scenario (one line)</label>
+    <input id="scenario" placeholder='e.g. "A moment I couldn’t capture"'/>
+
+    <label>Raw Experience (messy is OK)</label>
+    <textarea id="raw_experience" placeholder="Type freely..."></textarea>
+
+    <div class="row">
+      <div>
+        <label>Emotional Intensity</label>
+        <select id="emotion_intensity">
+          <option>High</option><option selected>Medium</option><option>Low</option>
+        </select>
+      </div>
+      <div>
+        <label>Irreversible</label>
+        <select id="irreversible">
+          <option value="Yes">Yes</option>
+          <option value="No" selected>No</option>
+        </select>
+      </div>
+    </div>
+
+    <button onclick="generate()">Generate</button>
+  </div>
+
+  <div id="result" class="card" style="display:none;">
+    <h3>Result</h3>
+    <pre id="answer" style="white-space:pre-wrap;"></pre>
+    <hr/>
+
+    <h4>Feedback</h4>
+    <input type="hidden" id="experience_id"/>
+
+    <label><input type="checkbox" id="recognition_hit"/> There was one sentence that stopped me in my tracks.</label><br/>
+    <label><input type="checkbox" id="meaning_hit"/> I didn't agree with it, but it forced me to think things through.</label><br/>
+    <label><input type="checkbox" id="perspective_hit"/> Perspective hit (“It gave me a new way to see it”)</label><br/><br/>
+
+    <label>Emotional reaction</label>
+
+      <select id="emotional_reaction">
+  <option value="None">无 / None</option>
+  <option value="Mild" selected>温和的 / Mild</option>
+  <option value="Strong">强烈的 / Strong</option>
+</select>
+
+
+    <label>Free text (optional)</label>
+    <input id="free_text" placeholder="What felt accurate / off?"/>
+
+    <button onclick="submitFeedback()">Submit feedback</button>
+    <p id="feedback_status"></p>
+  </div>
+
+<script>
+async function generate() {
+  const payload = {
+    access_code: document.getElementById("access_code").value.trim(),
+    user_type: document.getElementById("user_type").value,
+    scenario: document.getElementById("scenario").value.trim(),
+    raw_experience: document.getElementById("raw_experience").value.trim(),
+    time_pressure: document.getElementById("time_pressure").value,
+    emotion_intensity: document.getElementById("emotion_intensity").value,
+    irreversible: document.getElementById("irreversible").value
+  };
+
+  const res = await fetch("/generate", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    alert(data.detail || "Error");
+    return;
+  }
+
+  document.getElementById("result").style.display = "block";
+  document.getElementById("answer").textContent = data.answer;
+  document.getElementById("experience_id").value = data.experience_id;
+}
+
+async function submitFeedback() {
+  const payload = {
+    access_code: document.getElementById("access_code").value.trim(),
+    experience_id: document.getElementById("experience_id").value,
+    recognition_hit: document.getElementById("recognition_hit").checked,
+    meaning_hit: document.getElementById("meaning_hit").checked,
+    perspective_hit: document.getElementById("perspective_hit").checked,
+    emotional_reaction: document.getElementById("emotional_reaction").value,
+    free_text: document.getElementById("free_text").value.trim()
+  };
+
+  const res = await fetch("/feedback", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  document.getElementById("feedback_status").textContent = data.status === "ok" ? "Thanks!" : "Error";
+}
+</script>
+</body>
+</html>
