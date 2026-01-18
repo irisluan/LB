@@ -10,11 +10,43 @@
     button { padding: 12px 16px; cursor: pointer; }
     .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin-top: 16px; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .disclaimer {
+    margin-top: 12px;
+    margin-bottom: 24px;
+    max-width: 640px;
+    color: #666;
+  }
+
+  .disclaimer .tagline {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: #444;
+  }
+
+  .disclaimer .privacy-note {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #888;
+  }
   </style>
 </head>
 <body>
   <h2>Experience Answer v0 (Invite-only)</h2>
-  <p>Not advice. Not therapy. Just: interpret the experience.</p>
+  <div class="disclaimer">
+  <p class="tagline">
+    Not advice. Not therapy.<br>
+    Just: interpret the experience.
+  </p>
+
+  <p class="privacy-note">
+    This experience was generated with the assistance of a third-party AI model
+    and is for exploratory research purposes only.
+    <br>
+    Please do not enter any information that includes your real name, ID card
+    information, or any other private information you do not wish to disclose.
+  </p>
+</div>
 
   <div class="card">
     <label>Access Code</label>
