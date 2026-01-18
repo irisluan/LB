@@ -191,8 +191,15 @@ def feedback(data: FeedbackInput):
     row = data.model_dump()
     row["ts"] = int(time.time())
 
-    with open("feedback.jsonl", "a", encoding="utf-8") as f:
-        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    print("===== FEEDBACK RECEIVED =====", flush=True)
+    print(json.dumps(row, ensure_ascii=False), flush=True)
+    print("===== END FEEDBACK =====", flush=True)
+
+    try:
+        with open("feedback.jsonl", "a", encoding="utf-8") as f:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    except Exception as e:
+        print("FILE_WRITE_ERROR:", repr(e), flush=True)
 
     return {"status": "ok"}
 
