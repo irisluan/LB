@@ -51,18 +51,18 @@ class GenerateOutput(BaseModel):
     answer: str
 
 
-    from pydantic import BaseModel, ConfigDict
+class FeedbackInput(BaseModel):
+    access_code: str
+    experience_id: str
+    recognition_hit: bool
+    meaning_hit: bool
+    perspective_hit: bool
+    emotional_reaction: Reaction
+    free_text: Optional[str] = None
 
-    class FeedbackInput(BaseModel):
-        model_config = ConfigDict(extra="allow")  # 允许并保留前端传来的所有额外字段
+    class Config:
+        extra = "allow"
 
-        access_code: str
-        experience_id: str
-        recognition_hit: bool
-        meaning_hit: bool
-        perspective_hit: bool
-        emotional_reaction: str
-        free_text: str = ""
 
 
 # -------------------
